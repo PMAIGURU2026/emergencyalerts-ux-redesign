@@ -673,26 +673,21 @@ body {
     border-radius: var(--radius-lg);
     overflow: hidden;
     box-shadow: var(--shadow-md);
-    min-height: 400px;
+    height: 500px;
+    width: 100%;
+    position: relative;
 }
 
-.radar-placeholder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 400px;
-    background: linear-gradient(135deg, var(--gray-100) 0%, var(--gray-200) 100%);
+/* Leaflet map overrides */
+.radar-map .leaflet-container {
+    height: 100%;
+    width: 100%;
+    border-radius: var(--radius-lg);
 }
 
-.radar-placeholder p {
-    font-size: 1.25rem;
-    color: var(--gray-600);
-}
-
-.radar-note {
-    font-size: 0.875rem !important;
-    margin-top: 0.5rem;
+.radar-map .leaflet-control-attribution {
+    font-size: 0.7rem;
+    background: rgba(255, 255, 255, 0.8);
 }
 
 /* ===================================

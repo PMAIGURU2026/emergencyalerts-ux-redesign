@@ -5,6 +5,8 @@ class WeatherGuard {
     constructor() {
         this.currentLocation = null;
         this.weatherData = null;
+        this.map = null;
+        this.radarLayer = null;
         this.initializeEventListeners();
     }
 
@@ -225,6 +227,7 @@ class WeatherGuard {
         this.renderCurrentWeather();
         this.renderForecast();
         this.renderHourlyForecast();
+        this.initializeMap();
     }
 
     // Render location information
@@ -438,6 +441,83 @@ class WeatherGuard {
         const directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
         const index = Math.round(degrees / 22.5) % 16;
         return directions[index];
+    }
+
+    // Initialize interactive map with weather radar
+    initializeMap() {
+        const mapContainer = document.getElementById('radarMap');
+
+        // Clear existing map if any
+        if (this.map) {
+            this.map.remove();
+        }
+
+        // Create map centered on current location
+        this.map = L.map('radarMap').setView(
+            [this.currentLocation.lat, this.currentLocation.lon],
+            8
+        );
+
+        // Add base map layer (OpenStreetMap)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 19
+        }).addTo(this.map);
+
+        // Add location marker
+        const marker = L.marker([this.currentLocation.lat, this.currentLocation.lon])
+            .addTo(this.map)
+            .bindPopup(`<strong>${this.currentLocation.name}</strong><br>Your selected location`)
+            .openPopup();
+
+        // Add NOAA Weather Radar Layer
+        // Using NOAA's WMS (Web Map Service) for radar data
+        this.radarLayer = L.tileLayer.wms('https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi', {
+            layers: 'nexrad-n0r-900913',
+            format: 'image/png',
+            transparent: true,
+            attribution: 'NOAA/NWS Radar',
+            opacity: 0.6
+        }).addTo(this.map);
+
+        // Add map controls info
+        const legend = L.control({ position: 'bottomright' });
+        legend.onAdd = function() {
+            const div = L.DomUtil.create('div', 'map-legend');
+            div.innerHTML = `
+                <div style="background: white; padding: 10px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                    <strong>Weather Radar</strong><br>
+                    <small>Live NOAA radar data</small>
+                </div>
+            `;
+            return div;
+        };
+        legend.addTo(this.map);
+
+        // Add alert zones if there are active alerts
+        if (this.weatherData.alerts && this.weatherData.alerts.length > 0) {
+            this.weatherData.alerts.forEach(alert => {
+                const geometry = alert.geometry;
+                if (geometry && geometry.coordinates) {
+                    try {
+                        // NOAA alerts use GeoJSON format
+                        L.geoJSON(geometry, {
+                            style: {
+                                color: '#d83933',
+                                weight: 2,
+                                fillColor: '#d83933',
+                                fillOpacity: 0.2
+                            }
+                        }).addTo(this.map).bindPopup(`
+                            <strong>${alert.properties.event}</strong><br>
+                            ${alert.properties.headline || ''}
+                        `);
+                    } catch (e) {
+                        console.log('Could not render alert zone:', e);
+                    }
+                }
+            });
+        }
     }
 }
 
