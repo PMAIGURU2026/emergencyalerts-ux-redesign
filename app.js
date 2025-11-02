@@ -248,21 +248,24 @@ class WeatherGuard {
         })}`;
     }
 
-    // Render weather alerts
+    // Render weather alerts - V2 ENHANCED with MEGA prominent display
     renderAlerts() {
-        const alertsSection = document.getElementById('alertsSection');
-        const alertsContainer = document.getElementById('alertsContainer');
+        const emergencyAlertsSection = document.getElementById('emergencyAlertsSection');
+        const emergencyAlertsContainer = document.getElementById('emergencyAlertsContainer');
         const emergencyBanner = document.getElementById('emergencyBanner');
 
         if (!this.weatherData.alerts || this.weatherData.alerts.length === 0) {
-            this.hideElement('alertsSection');
+            // Show "All Clear" message
+            emergencyAlertsContainer.innerHTML = `
+                <div class="no-alerts-message">
+                    <h3>✅ No Active Weather Alerts</h3>
+                    <p>Weather conditions are normal for ${this.currentLocation.name}</p>
+                </div>
+            `;
+            this.showElement('emergencyAlertsSection');
             emergencyBanner.classList.add('hidden');
             return;
         }
-
-        // Show alerts section
-        this.showElement('alertsSection');
-        alertsContainer.innerHTML = '';
 
         // Sort alerts by severity
         const severityOrder = { 'Extreme': 0, 'Severe': 1, 'Moderate': 2, 'Minor': 3 };
@@ -280,29 +283,107 @@ class WeatherGuard {
             emergencyBanner.classList.remove('hidden');
         }
 
-        // Render all alerts
-        sortedAlerts.forEach(alert => {
+        // Clear container
+        emergencyAlertsContainer.innerHTML = '';
+
+        // Show alerts section
+        this.showElement('emergencyAlertsSection');
+
+        // Render MEGA emergency alerts
+        sortedAlerts.forEach((alert, index) => {
             const props = alert.properties;
-            const alertCard = document.createElement('div');
             const severity = (props.severity || 'Minor').toLowerCase();
 
-            alertCard.className = `alert-card ${severity}`;
+            // Get warning icon based on event type
+            const icon = this.getAlertIcon(props.event);
+
+            // Create MEGA alert card
+            const alertCard = document.createElement('div');
+            alertCard.className = `emergency-alert-mega ${severity}`;
+
+            const effectiveDate = new Date(props.effective).toLocaleString('en-US', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+
+            const expiresDate = props.ends ? new Date(props.ends).toLocaleString('en-US', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            }) : 'Until further notice';
+
             alertCard.innerHTML = `
-                <div class="alert-header">
-                    <div>
-                        <div class="alert-title">${props.event}</div>
+                <div class="emergency-alert-header">
+                    <div class="emergency-alert-icon">${icon}</div>
+                    <div class="emergency-alert-header-text">
+                        <h2>⚠️ WEATHER ALERT ⚠️</h2>
+                        <span class="emergency-alert-severity-badge">${props.severity || 'Alert'} WARNING</span>
                     </div>
-                    <span class="alert-severity ${severity}">${props.severity || 'Alert'}</span>
                 </div>
-                <div class="alert-description">${props.headline || props.description}</div>
-                <div class="alert-meta">
-                    <span>📅 ${new Date(props.effective).toLocaleString()}</span>
-                    ${props.ends ? `<span>⏰ Ends: ${new Date(props.ends).toLocaleString()}</span>` : ''}
+
+                <div class="emergency-alert-content">
+                    <div class="emergency-alert-event">${props.event}</div>
+                    <div class="emergency-alert-description">
+                        ${props.headline || props.description}
+                    </div>
+
+                    <div class="emergency-alert-meta">
+                        <div class="emergency-alert-meta-item">
+                            <span>📍</span>
+                            <span><strong>Area:</strong> ${props.areaDesc || this.currentLocation.name}</span>
+                        </div>
+                        <div class="emergency-alert-meta-item">
+                            <span>🕐</span>
+                            <span><strong>Effective:</strong> ${effectiveDate}</span>
+                        </div>
+                        <div class="emergency-alert-meta-item">
+                            <span>⏰</span>
+                            <span><strong>Expires:</strong> ${expiresDate}</span>
+                        </div>
+                        ${props.urgency ? `
+                        <div class="emergency-alert-meta-item">
+                            <span>⚡</span>
+                            <span><strong>Urgency:</strong> ${props.urgency}</span>
+                        </div>
+                        ` : ''}
+                    </div>
+
+                    ${props.instruction ? `
+                    <div class="emergency-alert-description" style="margin-top: 1rem;">
+                        <strong>⚠️ INSTRUCTIONS:</strong><br>
+                        ${props.instruction}
+                    </div>
+                    ` : ''}
                 </div>
             `;
 
-            alertsContainer.appendChild(alertCard);
+            emergencyAlertsContainer.appendChild(alertCard);
         });
+    }
+
+    // Get appropriate icon for alert type
+    getAlertIcon(eventType) {
+        const event = eventType.toLowerCase();
+
+        if (event.includes('tornado')) return '🌪️';
+        if (event.includes('hurricane')) return '🌀';
+        if (event.includes('flood')) return '🌊';
+        if (event.includes('thunder') || event.includes('storm')) return '⛈️';
+        if (event.includes('winter') || event.includes('snow') || event.includes('blizzard')) return '❄️';
+        if (event.includes('heat')) return '🔥';
+        if (event.includes('wind')) return '💨';
+        if (event.includes('freeze') || event.includes('frost')) return '🧊';
+        if (event.includes('fire')) return '🔥';
+        if (event.includes('dust')) return '🌫️';
+
+        return '⚠️';
     }
 
     // Close emergency banner
