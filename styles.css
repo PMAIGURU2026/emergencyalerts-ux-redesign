@@ -327,120 +327,220 @@ body {
 }
 
 /* ===================================
-   ALERTS SECTION
+   EMERGENCY ALERTS SECTION - V2 ENHANCED
    =================================== */
-.alerts-section {
-    margin-bottom: var(--spacing-xl);
+.emergency-alerts-section {
+    margin: var(--spacing-xl) 0;
+    animation: slideInDown 0.4s ease-out;
 }
 
-.section-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: var(--spacing-md);
+@keyframes slideInDown {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.emergency-alerts-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+/* MASSIVE Emergency Alert Card */
+.emergency-alert-mega {
+    background: linear-gradient(135deg, #8b0000 0%, #d83933 100%);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    color: var(--white);
+    box-shadow: 0 20px 40px rgba(216, 57, 51, 0.4);
+    position: relative;
+    overflow: hidden;
+    border: 4px solid var(--white);
+    animation: emergencyPulse 3s infinite;
+}
+
+@keyframes emergencyPulse {
+    0%, 100% {
+        box-shadow: 0 20px 40px rgba(216, 57, 51, 0.4), 0 0 0 0 rgba(216, 57, 51, 0.7);
+    }
+    50% {
+        box-shadow: 0 20px 40px rgba(216, 57, 51, 0.6), 0 0 0 15px rgba(216, 57, 51, 0);
+    }
+}
+
+.emergency-alert-mega.severe {
+    background: linear-gradient(135deg, #d83933 0%, #ff6b6b 100%);
+}
+
+.emergency-alert-mega.moderate {
+    background: linear-gradient(135deg, #ff9800 0%, #ffb347 100%);
+}
+
+.emergency-alert-mega.minor {
+    background: linear-gradient(135deg, #ffc107 0%, #ffd54f 100%);
     color: var(--gray-900);
+}
+
+/* Animated Warning Stripes Background */
+.emergency-alert-mega::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 200%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 20px,
+        rgba(255, 255, 255, 0.05) 20px,
+        rgba(255, 255, 255, 0.05) 40px
+    );
+    animation: slideStripes 20s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes slideStripes {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(50%);
+    }
+}
+
+.emergency-alert-header {
     display: flex;
     align-items: center;
-    gap: var(--spacing-sm);
-}
-
-.alert-pulse {
-    animation: pulse 2s infinite;
-}
-
-.alerts-container {
-    display: grid;
     gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    position: relative;
+    z-index: 1;
 }
 
-.alert-card {
-    background: var(--white);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-md);
-    border-left: 6px solid;
-    box-shadow: var(--shadow-md);
-    transition: var(--transition-base);
+.emergency-alert-icon {
+    font-size: 4rem;
+    animation: rotateWarning 2s ease-in-out infinite;
 }
 
-.alert-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+@keyframes rotateWarning {
+    0%, 100% {
+        transform: rotate(-15deg) scale(1);
+    }
+    50% {
+        transform: rotate(15deg) scale(1.1);
+    }
 }
 
-.alert-card.extreme {
-    border-left-color: var(--alert-extreme);
-    background: linear-gradient(to right, rgba(139, 0, 0, 0.05), var(--white));
-}
-
-.alert-card.severe {
-    border-left-color: var(--alert-severe);
-    background: linear-gradient(to right, rgba(216, 57, 51, 0.05), var(--white));
-}
-
-.alert-card.moderate {
-    border-left-color: var(--alert-moderate);
-    background: linear-gradient(to right, rgba(255, 152, 0, 0.05), var(--white));
-}
-
-.alert-card.minor {
-    border-left-color: var(--alert-minor);
-    background: linear-gradient(to right, rgba(255, 193, 7, 0.05), var(--white));
-}
-
-.alert-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: start;
-    margin-bottom: var(--spacing-sm);
-}
-
-.alert-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin-bottom: 0.25rem;
-}
-
-.alert-severity {
-    padding: 0.25rem 0.75rem;
-    border-radius: var(--radius-sm);
-    font-size: 0.75rem;
-    font-weight: 700;
+.emergency-alert-header-text h2 {
+    font-size: 2.5rem;
+    font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.alert-severity.extreme {
-    background: var(--alert-extreme);
-    color: var(--white);
+.emergency-alert-severity-badge {
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: var(--radius-lg);
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-top: 0.5rem;
 }
 
-.alert-severity.severe {
-    background: var(--alert-severe);
-    color: var(--white);
+.emergency-alert-content {
+    position: relative;
+    z-index: 1;
 }
 
-.alert-severity.moderate {
-    background: var(--alert-moderate);
-    color: var(--white);
+.emergency-alert-event {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-md);
+    line-height: 1.3;
 }
 
-.alert-severity.minor {
-    background: var(--alert-minor);
-    color: var(--gray-900);
-}
-
-.alert-description {
-    color: var(--gray-700);
+.emergency-alert-description {
+    font-size: 1.25rem;
     line-height: 1.6;
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+    background: rgba(0, 0, 0, 0.2);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
 }
 
-.alert-meta {
+.emergency-alert-meta {
     display: flex;
-    gap: var(--spacing-md);
-    font-size: 0.875rem;
-    color: var(--gray-600);
-    padding-top: var(--spacing-sm);
-    border-top: 1px solid var(--gray-200);
+    gap: var(--spacing-lg);
+    flex-wrap: wrap;
+    font-size: 1rem;
+    margin-top: var(--spacing-md);
+    padding-top: var(--spacing-md);
+    border-top: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.emergency-alert-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.emergency-alert-meta-item strong {
+    font-weight: 700;
+}
+
+/* Action Button */
+.emergency-alert-action {
+    margin-top: var(--spacing-md);
+    padding: 1rem 2rem;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--emergency-red-dark);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 1.125rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition-base);
+    text-transform: uppercase;
+}
+
+.emergency-alert-action:hover {
+    background: var(--white);
+    transform: scale(1.05);
+}
+
+/* No Alerts State */
+.no-alerts-message {
+    background: linear-gradient(135deg, var(--success-green) 0%, #00c853 100%);
+    color: var(--white);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    text-align: center;
+    box-shadow: var(--shadow-md);
+}
+
+.no-alerts-message h3 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.no-alerts-message p {
+    font-size: 1.125rem;
+    opacity: 0.95;
 }
 
 /* ===================================
@@ -794,6 +894,42 @@ body {
     .footer-content {
         grid-template-columns: 1fr;
     }
+
+    /* V2 Emergency Alerts - Mobile */
+    .emergency-alert-mega {
+        padding: var(--spacing-md);
+    }
+
+    .emergency-alert-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .emergency-alert-icon {
+        font-size: 3rem;
+    }
+
+    .emergency-alert-header-text h2 {
+        font-size: 1.75rem;
+    }
+
+    .emergency-alert-event {
+        font-size: 1.25rem;
+    }
+
+    .emergency-alert-description {
+        font-size: 1rem;
+    }
+
+    .emergency-alert-meta {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+
+    .no-alerts-message h3 {
+        font-size: 1.25rem;
+        flex-direction: column;
+    }
 }
 
 @media (max-width: 480px) {
@@ -807,5 +943,19 @@ body {
 
     .forecast-container {
         grid-template-columns: 1fr 1fr;
+    }
+
+    /* V2 Emergency Alerts - Small Mobile */
+    .emergency-alert-header-text h2 {
+        font-size: 1.5rem;
+    }
+
+    .emergency-alert-icon {
+        font-size: 2.5rem;
+    }
+
+    .emergency-alert-severity-badge {
+        font-size: 0.875rem;
+        padding: 0.375rem 1rem;
     }
 }
