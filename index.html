@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="WeatherGuard - Emergency-first weather alerts and forecasts powered by NOAA">
+    <title>WeatherGuard - Emergency Weather System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Emergency Alert Banner -->
+    <div id="emergencyBanner" class="emergency-banner hidden">
+        <div class="emergency-content">
+            <div class="emergency-icon">⚠️</div>
+            <div class="emergency-text">
+                <strong id="emergencyTitle">Severe Weather Alert</strong>
+                <p id="emergencyMessage"></p>
+            </div>
+            <button id="closeEmergency" class="emergency-close" aria-label="Close alert">×</button>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo">🌪️</div>
+                    <div class="logo-text">
+                        <h1>WeatherGuard</h1>
+                        <p class="tagline">Emergency Weather System</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button id="locationBtn" class="btn btn-secondary" aria-label="Get current location">
+                        📍 Detect Location
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Location Search -->
+            <section class="search-section">
+                <div class="search-container">
+                    <input
+                        type="text"
+                        id="locationInput"
+                        class="search-input"
+                        placeholder="Enter city, state or ZIP code (e.g., San Francisco, CA)"
+                        aria-label="Location search"
+                    >
+                    <button id="searchBtn" class="btn btn-primary">
+                        🔍 Get Weather
+                    </button>
+                </div>
+            </section>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="loading-state hidden">
+                <div class="spinner"></div>
+                <p>Loading weather data...</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="errorState" class="error-state hidden">
+                <div class="error-icon">⚠️</div>
+                <h3 id="errorTitle">Unable to Load Weather Data</h3>
+                <p id="errorMessage"></p>
+                <button id="retryBtn" class="btn btn-primary">Try Again</button>
+            </div>
+
+            <!-- Weather Content -->
+            <div id="weatherContent" class="weather-content hidden">
+                <!-- Active Alerts Section -->
+                <section id="alertsSection" class="alerts-section hidden">
+                    <h2 class="section-title">
+                        <span class="alert-pulse">🚨</span>
+                        Active Weather Alerts
+                    </h2>
+                    <div id="alertsContainer" class="alerts-container"></div>
+                </section>
+
+                <!-- Current Location -->
+                <section class="location-section">
+                    <h2 id="currentLocation" class="location-title">Loading...</h2>
+                    <p id="lastUpdated" class="last-updated"></p>
+                </section>
+
+                <!-- Current Conditions -->
+                <section class="current-weather">
+                    <div class="current-weather-grid">
+                        <div class="temperature-display">
+                            <div class="temp-main">
+                                <span id="currentTemp" class="temperature">--</span>
+                                <span class="temp-unit">°F</span>
+                            </div>
+                            <div id="currentCondition" class="condition-text">--</div>
+                            <div class="feels-like">
+                                Feels like <span id="feelsLike">--</span>°F
+                            </div>
+                        </div>
+
+                        <div class="weather-details">
+                            <div class="detail-item">
+                                <div class="detail-icon">💧</div>
+                                <div class="detail-content">
+                                    <span class="detail-label">Humidity</span>
+                                    <span id="humidity" class="detail-value">--%</span>
+                                </div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-icon">💨</div>
+                                <div class="detail-content">
+                                    <span class="detail-label">Wind</span>
+                                    <span id="windSpeed" class="detail-value">-- mph</span>
+                                </div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-icon">🌡️</div>
+                                <div class="detail-content">
+                                    <span class="detail-label">Pressure</span>
+                                    <span id="pressure" class="detail-value">-- mb</span>
+                                </div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-icon">👁️</div>
+                                <div class="detail-content">
+                                    <span class="detail-label">Visibility</span>
+                                    <span id="visibility" class="detail-value">-- mi</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 7-Day Forecast -->
+                <section class="forecast-section">
+                    <h2 class="section-title">7-Day Forecast</h2>
+                    <div id="forecastContainer" class="forecast-container"></div>
+                </section>
+
+                <!-- Hourly Forecast -->
+                <section class="hourly-section">
+                    <h2 class="section-title">Hourly Forecast</h2>
+                    <div id="hourlyContainer" class="hourly-container"></div>
+                </section>
+
+                <!-- Radar Map -->
+                <section class="radar-section">
+                    <h2 class="section-title">Weather Radar</h2>
+                    <div id="radarMap" class="radar-map">
+                        <div class="radar-placeholder">
+                            <p>Interactive radar map</p>
+                            <p class="radar-note">Powered by NOAA Weather Service</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>About WeatherGuard</h3>
+                    <p>Emergency-first weather information powered by the National Weather Service (NOAA).
+                       Designed to prioritize life-saving information during severe weather events.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Data Source</h3>
+                    <p>All weather data provided by <a href="https://www.weather.gov" target="_blank" rel="noopener">weather.gov</a></p>
+                    <p>National Oceanic and Atmospheric Administration (NOAA)</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Emergency Resources</h3>
+                    <ul class="emergency-links">
+                        <li><a href="https://www.ready.gov" target="_blank" rel="noopener">Ready.gov - Emergency Preparedness</a></li>
+                        <li><a href="https://www.weather.gov/safety" target="_blank" rel="noopener">Weather Safety Information</a></li>
+                        <li><a href="tel:911">Emergency: 911</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 WeatherGuard - UX Redesign Project | Data from NOAA/NWS</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
